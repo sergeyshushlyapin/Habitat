@@ -1,0 +1,25 @@
+{
+  "name": "habitat",
+  "version": "0.0.1",
+  "description": "Habitat Sitecore Solution",
+  "main": "gulp-config.js",
+  "dependencies": {
+    "gulp": "^3.9.0",
+    "gulp-autoprefixer": "^2.3.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-load-plugins": "^0.10.0",
+    "gulp-foreach": "^0.1.0",
+    "gulp-msbuild": "^0.2.13",
+    "gulp-sass": "^2.0.4",
+    "gulp-watch": "^4.3.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sitecore/Habitat.git"
+  },
+  "author": "Sitecore",
+  "bugs": {
+    "url": "https://github.com/Sitecore/Habitat/issues"
+  },
+  "homepage": "https://github.com/Sitecore/Habitat#readme"
+}
