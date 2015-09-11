@@ -17,3 +17,8 @@ lib/System/*
 .sonar
 vars.user.cmd
 /.vs
+node_modules/
+
+#Individual developer settings - do not include in version control
+/src/**/z.Habitat.DevSettings.config
+
