@@ -1,6 +1,6 @@
 param(
     $solution = '../Habitat.sln',
-    $moduleLocation = '.'
+    $moduleFolder = '.'
 )
 
 function LoadModule($moduleName, $modulePath)
@@ -20,9 +20,12 @@ function UnloadModule($moduleName)
     Remove-Module $moduleName 
 }
 
-LoadModule "nuget" "$moduleLocation\nuget.psm1"
-LoadModule "npm" "$moduleLocation\npm.psm1"
-LoadModule "msbuild" "$moduleLocation\msbuild"
+$location = Get-Location
+"Running from $location"
+
+LoadModule "nuget" ".\$moduleFolder\nuget.psm1"
+LoadModule "npm" ".\$moduleFolder\npm.psm1"
+LoadModule "msbuild" ".\$moduleFolder\msbuild"
 
 restoreNugetPackages($solution)
 restoreNodeModules
