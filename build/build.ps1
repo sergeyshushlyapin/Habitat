@@ -1,12 +1,16 @@
 param(
-    $solution = '../Habitat.sln'
+    $solution = '../Habitat.sln',
+    $moduleLocation = '.'
 )
 
 function LoadModule($moduleName, $modulePath)
 {
-    "Importing $moduleName"
-    if((Get-Module $moduleName) -eq $null) { 
-        Import-Module $modulePath
+    "Importing '$moduleName' from '$modulePath'"
+    $error.clear()
+    Import-Module $modulePath
+    if($error.count -ge 1) {
+        "Error importing module $moduleName"
+        exit 1
     }
 } 
 
@@ -16,9 +20,9 @@ function UnloadModule($moduleName)
     Remove-Module $moduleName 
 }
 
-LoadModule "nuget" ".\nuget.psm1"
-LoadModule "npm" ".\npm.psm1"
-LoadModule "msbuild" ".\msbuild"
+LoadModule "nuget" "$moduleLocation\nuget.psm1"
+LoadModule "npm" "$moduleLocation\npm.psm1"
+LoadModule "msbuild" "$moduleLocation\msbuild"
 
 restoreNugetPackages($solution)
 restoreNodeModules
