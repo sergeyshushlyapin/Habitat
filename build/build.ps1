@@ -29,7 +29,7 @@ LoadModule "msbuild" ".\$moduleFolder\msbuild"
 
 restoreNugetPackages($solution)
 restoreNodeModules
-# buildSolution($solution)
+buildSolution($solution)
 
 UnloadModule "nuget"
 UnloadModule "npm"
