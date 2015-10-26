@@ -1,3 +1,0 @@
-function restoreNodeModules(){
-    npm install    
-}
