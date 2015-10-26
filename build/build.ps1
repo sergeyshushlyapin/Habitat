@@ -2,7 +2,8 @@ param(
     $solution = '../Habitat.sln',
     $cmsRepository = 'd:\Sitecore Repo\CMS',
     $publishTarget = 'c:\temp',
-    $cmsVersion = 'Sitecore 8.1 rev. 151003'
+    $cmsVersion = 'Sitecore 8.1 rev. 151003',
+    $manifestLocation = '..\manifest.json'
 )
 
 function LoadModule($moduleName, $modulePath)
@@ -31,27 +32,20 @@ $location = Get-Location
 LoadModule "util" ".\util.psm1"
 LoadModule "gulp" ".\gulp.psm1"
 
-# Read JSON Manifest
-$Manifest = (Get-Content "..\manifest.json" -Raw) | ConvertFrom-Json
+############################################
+# Load Solution Manifest
+############################################
+$Manifest = (Get-Content $manifestLocation -Raw) | ConvertFrom-Json
 
-# Delete Existing site contents
-"Removing Existing Website"
-$deleteTarget = $publishTarget + '\*'
-Remove-Item $deleteTarget -Force -Recurse
-
-# Extract Website & Data folder from Sitecore distro zip
-$cmsDistro = $cmsRepository + '\' + $manifest.cmsVersion + '.zip'
-"Copying clean Website folder"
-$websiteFolderPath = $Manifest.cmsVersion+"\Website"
-Unzip -source $cmsDistro -target $publishTarget -folder $websiteFolderPath
-"Copying clean Data folder"
-$dataFolderPath = $Manifest.cmsVersion+"\Data"
-Unzip -source $cmsDistro -target $publishTarget -folder $dataFolderPath
-
-restoreNugetPackages($solution)
-restoreNodeModules
+############################################
+# Perform Setup tasks
+############################################
+CleanExistingSiteRoot($publishTarget)
+CopyCleanSitecoreInstance($cmsRepository, $Manifest, $publishTarget)
+RestoreNugetPackages($solution)
+RestoreNodeModules
 CopySitecoreLibraries
-buildSolution($solution)
+BuildSolution($solution)
 
 ############################################
 # UnLoad Modules
