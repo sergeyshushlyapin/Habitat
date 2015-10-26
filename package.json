@@ -8,10 +8,10 @@
     "gulp-autoprefixer": "^2.3.1",
     "gulp-rename": "^1.2.2",
     "gulp-load-plugins": "^0.10.0",
+    "gulp-watch": "^4.3.5",
     "gulp-foreach": "^0.1.0",
     "gulp-msbuild": "^0.2.13",
-    "gulp-sass": "^2.0.4",
-    "gulp-watch": "^4.3.5"
+    "gulp-sass": "^2.0.4"
   },
   "repository": {
     "type": "git",
