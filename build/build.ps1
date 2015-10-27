@@ -1,11 +1,18 @@
+############################################
+# Build Parameters
+############################################
 param(
     $solution = '../Habitat.sln',
     $cmsRepository = 'd:\Sitecore Repo\CMS',
-    $publishTarget = 'c:\temp',
+    $unzipTarget = 'C:\Websites\habitat.local',
+    $publishTarget = 'C:\\Websites\\habitat.local\\Website',
     $cmsVersion = 'Sitecore 8.1 rev. 151003',
-    $manifestLocation = '..\manifest.json'
+    $manifestLocation = "../manifest.json" 
 )
 
+############################################
+# Module Functions
+############################################
 function LoadModule($moduleName, $modulePath)
 {
     "Importing '$moduleName' from '$modulePath'"
@@ -40,12 +47,12 @@ $Manifest = (Get-Content $manifestLocation -Raw) | ConvertFrom-Json
 ############################################
 # Perform Setup tasks
 ############################################
-CleanExistingSiteRoot($publishTarget)
-CopyCleanSitecoreInstance($cmsRepository, $Manifest, $publishTarget)
-RestoreNugetPackages($solution)
+CleanExistingSiteRoot -publishTarget $unzipTarget
+CopyCleanSitecoreInstance -cmsRepository $cmsRepository -manifest $Manifest -publishTarget $unzipTarget
+RestoreNugetPackages -solution $solution
 RestoreNodeModules
-CopySitecoreLibraries
-BuildSolution($solution)
+CopySitecoreAssemblies
+BuildSolution -solution $solution -publishTarget $publishTarget
 
 ############################################
 # UnLoad Modules
