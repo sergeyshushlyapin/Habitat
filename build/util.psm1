@@ -15,9 +15,9 @@ function BuildSolution($solution, $publishTarget) {
       /nologo `
       /p:VisualStudioVersion=12.0 `
       /p:DeployOnBuild="true" `
-      /p:DeployDefaultTarget="WebPublish",
-      /p:WebPublishMethod="FileSystem",
-      /p:DeleteExistingFiles="false",
+      /p:DeployDefaultTarget="WebPublish" `
+      /p:WebPublishMethod="FileSystem" `
+      /p:DeleteExistingFiles="false" `
       /p:publishUrl=$publishTarget `
       $solution
 }
@@ -52,4 +52,9 @@ function CopyCleanSitecoreInstance($cmsRepository, $manifest, $publishTarget)
 function CopySitecoreAssemblies()
 {
   gulp 01-Copy-Sitecore-Lib
+}
+
+function CopyEnvironmentConfigs($configLocation, $publishTarget)
+{
+  copy-item $configLocation $publishTarget -force -recurse
 }

@@ -55,6 +55,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Habitat.Accounts", "src\Dom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Habitat.Framework.Indexing", "src\Framework\Indexing\Habitat.Framework.Indexing.csproj", "{80213F24-577F-4F0B-A3B8-62485EA4D2F3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configs", "Configs", "{FBA62F39-280A-47AD-8FBB-2AA61BBECD37}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Debug", "Debug", "{8E8F51CA-A580-40E3-9B27-C1160CC50F52}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App_Config", "App_Config", "{C19503BD-1AC3-4B3E-84FC-81BE0B24935C}"
+	ProjectSection(SolutionItems) = preProject
+		configs\Debug\App_Config\ConnectionStrings.config = configs\Debug\App_Config\ConnectionStrings.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -219,5 +228,7 @@ Global
 		{007CD5DC-0030-460D-91A3-3DDEA9AB472F} = {D2CBE02E-6AA7-4343-9A01-891F971A17F5}
 		{3F61C57D-50D9-4194-8196-EF5F7AA4CCE5} = {755F9E42-1707-4E1A-AE6D-3FD8A25118C0}
 		{80213F24-577F-4F0B-A3B8-62485EA4D2F3} = {D2CBE02E-6AA7-4343-9A01-891F971A17F5}
+		{8E8F51CA-A580-40E3-9B27-C1160CC50F52} = {FBA62F39-280A-47AD-8FBB-2AA61BBECD37}
+		{C19503BD-1AC3-4B3E-84FC-81BE0B24935C} = {8E8F51CA-A580-40E3-9B27-C1160CC50F52}
 	EndGlobalSection
 EndGlobal

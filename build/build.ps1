@@ -7,7 +7,9 @@ param(
     $unzipTarget = 'C:\Websites\habitat.local',
     $publishTarget = 'C:\\Websites\\habitat.local\\Website',
     $cmsVersion = 'Sitecore 8.1 rev. 151003',
-    $manifestLocation = "../manifest.json" 
+    $manifestLocation = "../manifest.json" ,
+    $licenseFile = "D:\Sitecore Repo\Licenses\license.xml",
+    $environConfigs = "../configs/local/*"
 )
 
 ############################################
@@ -53,6 +55,7 @@ RestoreNugetPackages -solution $solution
 RestoreNodeModules
 CopySitecoreAssemblies
 BuildSolution -solution $solution -publishTarget $publishTarget
+CopyEnvironmentConfigs -configLocation $environConfigs -publishTarget $publishTarget
 
 ############################################
 # UnLoad Modules
