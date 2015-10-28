@@ -13,7 +13,18 @@ param(
     $environConfigs = "../configs/local/*",
     $iisSiteName = "Habitat",
     $hostNames = @("habitat", "habitat.local"),
-    $buildConfiguration = "debug"
+    $buildConfiguration = "debug",
+    $dbDataLocation = "D:\SQL\MSSQL11.SQLSERVER\MSSQL\DATA",
+    $masterDbName = "HabitatNew_master",
+    $webDbName = "HabitatNew_web.mdf",
+    $anlyticsDbName = "HabitatNew_analytics",
+    $coreDbName = "HabitatNew_core",
+    $sessionsDbName = "HabitatNew_sessions",
+    $tempDir = "c:\temp\HabitatInstall",
+    $dbNamePrefix = "HabitatNew",
+    $dbUsername = "habitat",
+    $dbPassword = "habitat",
+    $sqlServer = "localhost\SQLSERVER"
 )
 
 ############################################
@@ -41,6 +52,7 @@ function UnloadModule($moduleName)
 ############################################
 LoadModule "util" ".\util.psm1"
 LoadModule "iis" ".\iis.psm1"
+LoadModule "database" ".\database.psm1"
 LoadModule "webAdmin" WebAdministration
 
 ############################################
@@ -51,6 +63,7 @@ $Manifest = (Get-Content $manifestLocation -Raw) | ConvertFrom-Json
 ############################################
 # Perform Setup tasks
 ############################################
+EnsureTempDirExists -tempDir $tempDir
 RemoveSite -iisSiteName $iisSiteName
 CleanExistingSiteRoot -publishTarget $unzipTarget
 CopyCleanSitecoreInstance -cmsRepository $cmsRepository -manifest $Manifest -publishTarget $unzipTarget
@@ -61,10 +74,17 @@ BuildSolutionWithPublish -solution $solution -publishTarget $publishTarget -buil
 CopyFiles -sourceFiles $environConfigs -publishTarget $publishTarget
 CopyFiles -sourceFiles $licenseFile -publishTarget $licenseTarget
 AddSite -iisSiteName $iisSiteName -siteRoot $iisPath -hostnames $hostNames
+CopyDatabaseFiles -cmsRepository $cmsRepository -manifest $Manifest -dbDataLocation $dbDataLocation -tempDir $tempDir -dbNamePrefix $dbNamePrefix
+
+Import-Module sqlps -DisableNameChecking
+CreateDbLogin -username $dbUsername -password $dbPassword -sqlServer $sqlServer
+AttachAllDatabases -dbNamePrefix $dbNamePrefix -dbDataLocation $dbDataLocation -sqlServer $sqlServer
+RemoveTempDir -tempDir $tempDir
 
 ############################################
 # UnLoad Modules
 ############################################
 UnloadModule "util"
 UnloadModule "iis"
-UnloadModule "WebAdministration" 
+UnloadModule "database"
+UnloadModule "WebAdministration"
