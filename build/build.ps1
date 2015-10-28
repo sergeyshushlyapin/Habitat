@@ -6,10 +6,14 @@ param(
     $cmsRepository = 'd:\Sitecore Repo\CMS',
     $unzipTarget = 'C:\Websites\habitat.local',
     $publishTarget = 'C:\\Websites\\habitat.local\\Website',
-    $cmsVersion = 'Sitecore 8.1 rev. 151003',
+    $licenseTarget = 'C:\\Websites\\habitat.local\\Data',
+    $iisPath = 'C:\Websites\habitat.local\Website',
     $manifestLocation = "../manifest.json" ,
     $licenseFile = "D:\Sitecore Repo\Licenses\license.xml",
-    $environConfigs = "../configs/local/*"
+    $environConfigs = "../configs/local/*",
+    $iisSiteName = "Habitat",
+    $hostNames = @("habitat", "habitat.local"),
+    $buildConfiguration = "debug"
 )
 
 ############################################
@@ -32,14 +36,12 @@ function UnloadModule($moduleName)
     Remove-Module $moduleName 
 }
 
-$location = Get-Location
-"Running from $location"
-
 ############################################
 # Load Modules
 ############################################
 LoadModule "util" ".\util.psm1"
-LoadModule "gulp" ".\gulp.psm1"
+LoadModule "iis" ".\iis.psm1"
+LoadModule "webAdmin" WebAdministration
 
 ############################################
 # Load Solution Manifest
@@ -49,16 +51,20 @@ $Manifest = (Get-Content $manifestLocation -Raw) | ConvertFrom-Json
 ############################################
 # Perform Setup tasks
 ############################################
+RemoveSite -iisSiteName $iisSiteName
 CleanExistingSiteRoot -publishTarget $unzipTarget
 CopyCleanSitecoreInstance -cmsRepository $cmsRepository -manifest $Manifest -publishTarget $unzipTarget
 RestoreNugetPackages -solution $solution
 RestoreNodeModules
 CopySitecoreAssemblies
-BuildSolution -solution $solution -publishTarget $publishTarget
-CopyEnvironmentConfigs -configLocation $environConfigs -publishTarget $publishTarget
+BuildSolutionWithPublish -solution $solution -publishTarget $publishTarget -buildConfiguration $buildConfiguration
+CopyFiles -sourceFiles $environConfigs -publishTarget $publishTarget
+CopyFiles -sourceFiles $licenseFile -publishTarget $licenseTarget
+AddSite -iisSiteName $iisSiteName -siteRoot $iisPath -hostnames $hostNames
 
 ############################################
 # UnLoad Modules
 ############################################
 UnloadModule "util"
-UnloadModule "gulp"
+UnloadModule "iis"
+UnloadModule "WebAdministration" 
