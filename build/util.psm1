@@ -92,3 +92,12 @@ function CopyDatabaseFiles($cmsRepository, $manifest, $publishTarget, $tempDir)
   rename-item -path $tempDir"\Databases\Sitecore.Sessions.LDF" -newname "HabitatNew_Sessions.LDF"
   CopyFiles -sourceFiles $tempDir"\Databases\*" -publishTarget $publishTarget
 }
+
+function PerformUnicornSync()
+{
+  $url = 'http://habitat.local/unicorn.aspx?verb=Sync'
+  $deploymentToolAuthToken = '68433ab4-a113-4f39-9b30-fb0e425c7a16'
+  $result = Invoke-WebRequest -Uri $url -Headers @{ "Authenticate" = $deploymentToolAuthToken } -TimeoutSec 10800 -UseBasicParsing
+
+  Write-Host $result.Content
+}
