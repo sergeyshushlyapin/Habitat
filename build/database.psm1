@@ -56,11 +56,20 @@ function CreateDbLogin($username, $password, $sqlServer)
     "Login $username created successfully."
 }
 
-function GrantDatabaseAccess($dbNamePrefix, $username, $sqlServer)
+function SetupDbPermissions($dbNamePrefix, $username, $sqlServer)
+{
+  GrantDatabaseAccess -dbName $dbNamePrefix"_Analytics" -username $username -sqlServer $sqlServer
+  GrantDatabaseAccess -dbName $dbNamePrefix"_Core" -username $username -sqlServer $sqlServer
+  GrantDatabaseAccess -dbName $dbNamePrefix"_Master" -username $username -sqlServer $sqlServer
+  GrantDatabaseAccess -dbName $dbNamePrefix"_Sessions" -username $username -sqlServer $sqlServer
+  GrantDatabaseAccess -dbName $dbNamePrefix"_Web" -username $username -sqlServer $sqlServer
+}
+
+function GrantDatabaseAccess($dbName, $username, $sqlServer)
 {
     $roleName = "db_owner"
     $server = New-Object -TypeName Microsoft.SqlServer.Management.Smo.Server -ArgumentList $sqlServer
-    $database = $server.Databases[$dbNamePrefix+"_Web"]
+    $database = $server.Databases[$dbName]
     if ($database.Users[$username])
     {
         Write-Host("Dropping user $username on $database.")
@@ -77,77 +86,4 @@ function GrantDatabaseAccess($dbNamePrefix, $username, $sqlServer)
     $dbrole.AddMember($username)
     $dbrole.Alter()
     Write-Host("User $dbUser successfully added to $roleName role.")
-
- #    $server = (Get-Item sqlserver:\sql\localhost\DEFAULT -WarningAction SilentlyContinue)
- #    $database = $server.Databases[$databaseName]
-
-
-	# $connection = new-object system.data.SqlClient.SqlConnection("Data Source=localhost;Integrated Security=SSPI;Initial Catalog=$databaseName");
-	# $connection.Open()
-	# Try {
-	# 	$query ="if exists(select * from sys.database_principals where name = '$username') DROP USER [$username] if not exists(select * from sys.database_principals where name = '$username') CREATE USER [$username] FOR LOGIN [$username]"
-	# 	TryExecuteQuery $query $connection
-	    
-	#     $query = "EXEC sp_addrolemember @rolename = N'db_owner', @membername = N'$username'"
-	# 	TryExecuteQuery $query $connection
-	# } finally {
- #    	$connection.Close()
-	# }
-}
-
-function TryExecuteQuery($query, $connection){
-	$command = new-object "System.Data.SqlClient.SqlCommand" ($query, $connection)
-
-	#try 5 times with 3 seconds intervals
-	$tries = 0
-	$isExecuted = $false
-	while ($isExecuted -eq $false){
-		try {
-			$tries++
-			$command.ExecuteNonQuery() | out-null
-			$isExecuted = $true
-		} catch {
-			#close-open connection solves the intermitent issue on connectivity
-			$connection.Close()
-			$connection.Open()
-			if ($tries -eq 5){
-				throw $_
-			} else {
-				Start-Sleep -Seconds 3
-			}
-		}
-	}
-}
-
-function DetachDatabase($name)
-{
-    $server = (Get-Item sqlserver:\sql\localhost\DEFAULT -WarningAction SilentlyContinue)
-    $database = $server.Databases[$name]
-    if ($database -ne $null)
-    {
-        $server.KillAllProcesses($name)
-        $database.Drop()
-    }
-}
-
-function SetOffline($name)
-{
-    $server = (Get-Item sqlserver:\sql\localhost\DEFAULT -WarningAction SilentlyContinue)
-    $database = $server.Databases[$name]
-    if ($database -ne $null)
-    {
-        $server.KillAllProcesses($name)
-        $database.SetOffline()
-    }
-}
-
-function SetOnline($name)
-{
-    $server = (Get-Item sqlserver:\sql\localhost\DEFAULT -WarningAction SilentlyContinue)
-    $database = $server.Databases[$name]
-
-    if ($database -ne $null)
-    {
-        $database.SetOnline()
-    }
 }

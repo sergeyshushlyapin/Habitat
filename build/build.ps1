@@ -63,23 +63,26 @@ $Manifest = (Get-Content $manifestLocation -Raw) | ConvertFrom-Json
 ############################################
 # Perform Setup tasks
 ############################################
-EnsureTempDirExists -tempDir $tempDir
-RemoveSite -iisSiteName $iisSiteName
-CleanExistingSiteRoot -publishTarget $unzipTarget
-CopyCleanSitecoreInstance -cmsRepository $cmsRepository -manifest $Manifest -publishTarget $unzipTarget
-RestoreNugetPackages -solution $solution
-RestoreNodeModules
-CopySitecoreAssemblies
-BuildSolutionWithPublish -solution $solution -publishTarget $publishTarget -buildConfiguration $buildConfiguration
-CopyFiles -sourceFiles $environConfigs -publishTarget $publishTarget
-CopyFiles -sourceFiles $licenseFile -publishTarget $licenseTarget
-AddSite -iisSiteName $iisSiteName -siteRoot $iisPath -hostnames $hostNames
-CopyDatabaseFiles -cmsRepository $cmsRepository -manifest $Manifest -dbDataLocation $dbDataLocation -tempDir $tempDir -dbNamePrefix $dbNamePrefix
+# EnsureTempDirExists -tempDir $tempDir
+# RemoveSite -iisSiteName $iisSiteName
+# CleanExistingSiteRoot -publishTarget $unzipTarget
+# CopyCleanSitecoreInstance -cmsRepository $cmsRepository -manifest $Manifest -publishTarget $unzipTarget
+# RestoreNugetPackages -solution $solution
+# RestoreNodeModules
+# CopySitecoreAssemblies
+# BuildSolutionWithPublish -solution $solution -publishTarget $publishTarget -buildConfiguration $buildConfiguration
+# CopyFiles -sourceFiles $environConfigs -publishTarget $publishTarget
+# CopyFiles -sourceFiles $licenseFile -publishTarget $licenseTarget
+# AddSite -iisSiteName $iisSiteName -siteRoot $iisPath -hostnames $hostNames
+# CopyDatabaseFiles -cmsRepository $cmsRepository -manifest $Manifest -dbDataLocation $dbDataLocation -tempDir $tempDir -dbNamePrefix $dbNamePrefix
 
 Import-Module sqlps -DisableNameChecking
-CreateDbLogin -username $dbUsername -password $dbPassword -sqlServer $sqlServer
-AttachAllDatabases -dbNamePrefix $dbNamePrefix -dbDataLocation $dbDataLocation -sqlServer $sqlServer
-RemoveTempDir -tempDir $tempDir
+# CreateDbLogin -username $dbUsername -password $dbPassword -sqlServer $sqlServer
+# AttachAllDatabases -dbNamePrefix $dbNamePrefix -dbDataLocation $dbDataLocation -sqlServer $sqlServer
+
+SetupDbPermissions -dbNamePrefix "HabitatNew" -username "habitat" -sqlServer $sqlServer
+
+# RemoveTempDir -tempDir $tempDir
 
 ############################################
 # UnLoad Modules
