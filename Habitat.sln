@@ -61,7 +61,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Local", "Local", "{8E8F51CA
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App_Config", "App_Config", "{C19503BD-1AC3-4B3E-84FC-81BE0B24935C}"
 	ProjectSection(SolutionItems) = preProject
-		configs\Debug\App_Config\ConnectionStrings.config = configs\Debug\App_Config\ConnectionStrings.config
+		configs\Local\App_Config\ConnectionStrings.config = configs\Local\App_Config\ConnectionStrings.config
 	EndProjectSection
 EndProject
 Global

@@ -48,6 +48,10 @@ function UnloadModule($moduleName)
     "Unloading $moduleName" 
     Remove-Module $moduleName 
 }
+############################################
+# Load Solution Manifest
+############################################
+$Manifest = (Get-Content $manifestLocation -Raw) | ConvertFrom-Json
 
 ############################################
 # Load Modules
@@ -56,16 +60,15 @@ LoadModule "util" ".\util.psm1"
 LoadModule "iis" ".\iis.psm1"
 LoadModule "database" ".\database.psm1"
 LoadModule "webAdmin" WebAdministration
-
-############################################
-# Load Solution Manifest
-############################################
-$Manifest = (Get-Content $manifestLocation -Raw) | ConvertFrom-Json
+Push-Location
+Import-Module sqlps -DisableNameChecking
+Pop-Location
 
 ############################################
 # Perform Setup tasks
 ############################################
-EnsureTempDirExists -tempDir $tempDir
+EnsureDirExists -dir $tempDir
+EnsureDirExists -dir $iisPath
 RemoveSite -iisSiteName $iisSiteName
 CleanExistingSiteRoot -publishTarget $unzipTarget
 CopyCleanSitecoreInstance -cmsRepository $cmsRepository -manifest $Manifest -publishTarget $unzipTarget
@@ -77,14 +80,11 @@ CopyFiles -sourceFiles $environConfigs -publishTarget $publishTarget
 CopyFiles -sourceFiles $licenseFile -publishTarget $licenseTarget
 AddSite -iisSiteName $iisSiteName -siteRoot $iisPath -hostnames $hostNames
 CopyDatabaseFiles -cmsRepository $cmsRepository -manifest $Manifest -dbDataLocation $dbDataLocation -tempDir $tempDir -dbNamePrefix $dbNamePrefix
-
-Import-Module sqlps -DisableNameChecking
 CreateDbLogin -username $dbUsername -password $dbPassword -sqlServer $sqlServer
 AttachAllDatabases -dbNamePrefix $dbNamePrefix -dbDataLocation $dbDataLocation -sqlServer $sqlServer
-SetupDbPermissions -dbNamePrefix "HabitatNew" -username "habitat" -sqlServer $sqlServer
+SetupDbPermissions -dbNamePrefix $dbNamePrefix -username $dbUsername -sqlServer $sqlServer
 PerformUnicornSync -targetHostName $targetHostName -unicornDeploymentToken $unicornDeploymentToken
-
-RemoveTempDir -tempDir $tempDir
+RemoveDir -dir $tempDir
 
 ############################################
 # UnLoad Modules

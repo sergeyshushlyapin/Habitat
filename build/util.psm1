@@ -61,16 +61,16 @@ function CopyFiles($sourceFiles, $publishTarget)
   copy-item $sourceFiles $publishTarget -force -recurse
 }
 
-function EnsureTempDirExists($tempDir)
+function EnsureDirExists($dir)
 {
-  "Creating Temp dir at: " + $tempDir
-  New-Item -ItemType Directory -Force -Path $tempDir
+  "Creating dir at: " + $dir
+  New-Item -ItemType Directory -Force -Path $dir
 }
 
-function RemoveTempDir($tempDir)
+function RemoveDir($dir)
 {
-  "Removing Temp dir at: " + $tempDir
-  remove-item $tempDir -force -recurse
+  "Removing dir at: " + $dir
+  remove-item $dir -force -recurse
 }
 
 function CopyDatabaseFiles($cmsRepository, $manifest, $publishTarget, $tempDir)
@@ -93,10 +93,10 @@ function CopyDatabaseFiles($cmsRepository, $manifest, $publishTarget, $tempDir)
   CopyFiles -sourceFiles $tempDir"\Databases\*" -publishTarget $publishTarget
 }
 
-function PerformUnicornSync()
+function PerformUnicornSync($targetHostName, $unicornDeploymentToken)
 {
-  $url = 'http://habitat.local/unicorn.aspx?verb=Sync'
-  $deploymentToolAuthToken = '68433ab4-a113-4f39-9b30-fb0e425c7a16'
+  $url = 'http://'+$targetHostName+'/unicorn.aspx?verb=Sync'
+  $deploymentToolAuthToken = $unicornDeploymentToken
   $result = Invoke-WebRequest -Uri $url -Headers @{ "Authenticate" = $deploymentToolAuthToken } -TimeoutSec 10800 -UseBasicParsing
 
   Write-Host $result.Content
