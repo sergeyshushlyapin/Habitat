@@ -31,7 +31,7 @@ function Unzip($source, $target, $folder)
 
 function CleanExistingSiteRoot($publishTarget)
 {
-  "Removing all files from: " + $publishTarget
+  Write-Host("Removing all files from: $publishTarget")
   $deleteTarget = $publishTarget + '\\*'
   Remove-Item $deleteTarget -Force -Recurse
 }
@@ -40,36 +40,36 @@ function CopyCleanSitecoreInstance($cmsRepository, $manifest, $publishTarget)
 {
   $cmsDistro = $cmsRepository + '\' + $manifest.cmsVersion + '.zip'
 
-  "Copying Website folder from: '" + $cmsDistro + "', To: '" + $publishTarget + "'"
+  Write-Host("Copying Website folder from: '$cmsDistro', To: '$publishTarget'")
   $websiteFolderPath = $Manifest.cmsVersion+"\Website"
   Unzip -source $cmsDistro -target $publishTarget -folder $websiteFolderPath
 
-  "Copying Data folder from : '" + $cmsDistro + "', To: '" + $publishTarget + "'"
+  Write-Host("Copying Data folder from : '$cmsDistro', To: '$publishTarget'")
   $dataFolderPath = $Manifest.cmsVersion+"\Data"
   Unzip -source $cmsDistro -target $publishTarget -folder $dataFolderPath
 }
 
 function CopySitecoreAssemblies()
 {
-  "Copying Sitecore Assemblies for Build"
+  Write-Host("Copying Sitecore Assemblies for Build")
   gulp 01-Copy-Sitecore-Lib
 }
 
 function CopyFiles($sourceFiles, $publishTarget)
 {
-  "Copying files from: '" + $sourceFiles + "', To: '" + $publishTarget + "'"
+  Write-Host("Copying files from: '$sourceFiles', To: '$publishTarget'")
   copy-item $sourceFiles $publishTarget -force -recurse
 }
 
 function EnsureDirExists($dir)
 {
-  "Creating dir at: " + $dir
+  Write-Host("Creating dir at: $dir")
   New-Item -ItemType Directory -Force -Path $dir
 }
 
 function RemoveDir($dir)
 {
-  "Removing dir at: " + $dir
+  Write-Host("Removing dir at: $dir")
   remove-item $dir -force -recurse
 }
 
@@ -77,7 +77,7 @@ function CopyDatabaseFiles($cmsRepository, $manifest, $publishTarget, $tempDir)
 {
   $cmsDistro = $cmsRepository + '\' + $manifest.cmsVersion + '.zip'
 
-  "Copying Database files folder from: '" + $cmsDistro + "', To: '" + $publishTarget + "'"
+  Write-Host("Copying Database files folder from: '$cmsDistro', To: '$publishTarget'")
   $dataFilePath = $Manifest.cmsVersion+"\Databases"
   Unzip -source $cmsDistro -target $tempDir -folder $dataFilePath
   rename-item -path $tempDir"\Databases\Sitecore.Web.MDF" -newname "HabitatNew_Web.MDF"

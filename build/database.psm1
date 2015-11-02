@@ -2,7 +2,7 @@ function CopyDatabaseFiles($cmsRepository, $manifest, $dbDataLocation, $tempDir,
 {
   $cmsDistro = $cmsRepository + '\' + $manifest.cmsVersion + '.zip'
 
-  "Copying Database files folder from: '" + $cmsDistro + "', To: '" + $dbDataLocation + "'"
+  Write-Host("Copying Database files folder from: '$cmsDistro', To: '$dbDataLocation'")
   $dataFilePath = $Manifest.cmsVersion+"\Databases"
   Unzip -source $cmsDistro -target $tempDir -folder $dataFilePath
   rename-item -path $tempDir"\Databases\Sitecore.Web.MDF" -newname $dbNamePrefix"_Web.MDF"
@@ -20,7 +20,7 @@ function CopyDatabaseFiles($cmsRepository, $manifest, $dbDataLocation, $tempDir,
 
 function AttachAllDatabases($dbNamePrefix, $dbDataLocation, $sqlServer)
 {
-    "Attaching Sitecore Databases"
+    Write-Host("Attaching Sitecore Databases")
     AttachDatabase -name $dbNamePrefix"_Web" -mdfFile $dbDataLocation"\"$dbNamePrefix"_Web.MDF" -ldfFile $dbDataLocation"\"$dbNamePrefix"_Web.LDF" -sqlServer $sqlServer
     AttachDatabase -name $dbNamePrefix"_Master" -mdfFile $dbDataLocation"\"$dbNamePrefix"_Master.MDF" -ldfFile $dbDataLocation"\"$dbNamePrefix"_Master.LDF" -sqlServer $sqlServer
     AttachDatabase -name $dbNamePrefix"_Core" -mdfFile $dbDataLocation"\"$dbNamePrefix"_Core.MDF" -ldfFile $dbDataLocation"\"$dbNamePrefix"_Core.LDF" -sqlServer $sqlServer
@@ -30,7 +30,7 @@ function AttachAllDatabases($dbNamePrefix, $dbDataLocation, $sqlServer)
 
 function AttachDatabase($name, $mdfFile, $ldfFile, $sqlServer)
 {
-    "Attaching Database: " + $name
+    Write-Host("Attaching Database: $name")
     $server = (Get-Item "sqlserver:\sql\$sqlServer" -WarningAction SilentlyContinue) 
     $owner = "sa"
     $sc = new-object System.Collections.Specialized.StringCollection
@@ -53,7 +53,7 @@ function CreateDbLogin($username, $password, $sqlServer)
     $login.PasswordExpirationEnabled = $false
     $login.PasswordPolicyEnforced  = $false
     $login.Create($password)
-    "Login $username created successfully."
+    Write-Host("Login $username created successfully.")
 }
 
 function SetupDbPermissions($dbNamePrefix, $username, $sqlServer)
@@ -86,4 +86,25 @@ function GrantDatabaseAccess($dbName, $username, $sqlServer)
     $dbrole.AddMember($username)
     $dbrole.Alter()
     Write-Host("User $dbUser successfully added to $roleName role.")
+}
+
+function DropAllDatabases($dbNamePrefix, $sqlServer)
+{
+  DropDatabase -sqlServer $sqlServer -name $dbNamePrefix"_Analytics"
+  DropDatabase -sqlServer $sqlServer -name $dbNamePrefix"_Core"
+  DropDatabase -sqlServer $sqlServer -name $dbNamePrefix"_Master"
+  DropDatabase -sqlServer $sqlServer -name $dbNamePrefix"_Sessions"
+  DropDatabase -sqlServer $sqlServer -name $dbNamePrefix"_Web"
+}
+
+function DropDatabase($sqlServer, $name)
+{
+    Write-Host("Dropping database: $name.")
+    $server = (Get-Item "sqlserver:\sql\$sqlServer" -WarningAction SilentlyContinue) 
+    $database = $server.Databases[$name]
+    if ($database -ne $null)
+    {
+        $server.KillAllProcesses($name)
+        $database.Drop()
+    }
 }

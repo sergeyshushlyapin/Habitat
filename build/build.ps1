@@ -34,18 +34,18 @@ param(
 ############################################
 function LoadModule($moduleName, $modulePath)
 {
-    "Importing '$moduleName' from '$modulePath'"
+    Write-Host("Importing '$moduleName' from '$modulePath'")
     $error.clear()
     Import-Module $modulePath
     if($error.count -ge 1) {
-        "Error importing module $moduleName"
+        Write-Host("Error importing module $moduleName")
         exit 1
     }
 } 
 
 function UnloadModule($moduleName)
 {
-    "Unloading $moduleName" 
+    Write-Host("Unloading $moduleName") 
     Remove-Module $moduleName 
 }
 ############################################
@@ -70,6 +70,7 @@ Pop-Location
 EnsureDirExists -dir $tempDir
 EnsureDirExists -dir $iisPath
 RemoveSite -iisSiteName $iisSiteName
+DropAllDatabases -dbNamePrefix $dbNamePrefix -sqlServer $sqlServer
 CleanExistingSiteRoot -publishTarget $unzipTarget
 CopyCleanSitecoreInstance -cmsRepository $cmsRepository -manifest $Manifest -publishTarget $unzipTarget
 RestoreNugetPackages -solution $solution
