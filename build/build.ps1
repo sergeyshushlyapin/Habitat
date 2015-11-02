@@ -3,30 +3,9 @@
 ############################################
 param(
     $solution = '../Habitat.sln',
-    $cmsRepository = 'd:\Sitecore Repo\CMS',
-    $unzipTarget = 'C:\Websites\habitat.local',
-    $publishTarget = 'C:\\Websites\\habitat.local\\Website',
-    $licenseTarget = 'C:\\Websites\\habitat.local\\Data',
-    $iisPath = 'C:\Websites\habitat.local\Website',
-    $manifestLocation = "../manifest.json" ,
-    $licenseFile = "D:\Sitecore Repo\Licenses\license.xml",
-    $environConfigs = "../configs/local/*",
-    $iisSiteName = "Habitat",
-    $hostNames = @("habitat", "habitat.local"),
-    $buildConfiguration = "debug",
-    $dbDataLocation = "D:\SQL\MSSQL11.SQLSERVER\MSSQL\DATA",
-    $masterDbName = "HabitatNew_master",
-    $webDbName = "HabitatNew_web.mdf",
-    $anlyticsDbName = "HabitatNew_analytics",
-    $coreDbName = "HabitatNew_core",
-    $sessionsDbName = "HabitatNew_sessions",
-    $tempDir = "c:\temp\HabitatInstall",
-    $dbNamePrefix = "HabitatNew",
-    $dbUsername = "habitat",
-    $dbPassword = "habitat",
-    $sqlServer = "localhost\SQLSERVER",
-    $targetHostName = "habitat.local",
-    $unicornDeploymentToken = "68433ab4-a113-4f39-9b30-fb0e425c7a16"
+    $manifestLocation = '../manifest.json' ,
+    $environConfigs = '../configs/local/*',
+    $buildType = 'local'
 )
 
 ############################################
@@ -67,25 +46,25 @@ Pop-Location
 ############################################
 # Perform Setup tasks
 ############################################
-EnsureDirExists -dir $tempDir
-EnsureDirExists -dir $iisPath
-RemoveSite -iisSiteName $iisSiteName
-DropAllDatabases -dbNamePrefix $dbNamePrefix -sqlServer $sqlServer
-CleanExistingSiteRoot -publishTarget $unzipTarget
-CopyCleanSitecoreInstance -cmsRepository $cmsRepository -manifest $Manifest -publishTarget $unzipTarget
+EnsureDirExists -dir $Manifest.builds.$buildType.tempDir
+EnsureDirExists -dir $Manifest.builds.$buildType.iisPath
+RemoveSite -iisSiteName $Manifest.builds.$buildType.iisSiteName
+DropAllDatabases -dbNamePrefix $Manifest.builds.$buildType.dbNamePrefix -sqlServer $Manifest.builds.$buildType.sqlServer
+CleanExistingSiteRoot -publishTarget $Manifest.builds.$buildType.unzipTarget
+CopyCleanSitecoreInstance -cmsRepository $Manifest.builds.$buildType.cmsRepository -manifest $Manifest -publishTarget $Manifest.builds.$buildType.unzipTarget
 RestoreNugetPackages -solution $solution
 RestoreNodeModules
 CopySitecoreAssemblies
-BuildSolutionWithPublish -solution $solution -publishTarget $publishTarget -buildConfiguration $buildConfiguration
-CopyFiles -sourceFiles $environConfigs -publishTarget $publishTarget
-CopyFiles -sourceFiles $licenseFile -publishTarget $licenseTarget
-AddSite -iisSiteName $iisSiteName -siteRoot $iisPath -hostnames $hostNames
-CopyDatabaseFiles -cmsRepository $cmsRepository -manifest $Manifest -dbDataLocation $dbDataLocation -tempDir $tempDir -dbNamePrefix $dbNamePrefix
-CreateDbLogin -username $dbUsername -password $dbPassword -sqlServer $sqlServer
-AttachAllDatabases -dbNamePrefix $dbNamePrefix -dbDataLocation $dbDataLocation -sqlServer $sqlServer
-SetupDbPermissions -dbNamePrefix $dbNamePrefix -username $dbUsername -sqlServer $sqlServer
-PerformUnicornSync -targetHostName $targetHostName -unicornDeploymentToken $unicornDeploymentToken
-RemoveDir -dir $tempDir
+BuildSolutionWithPublish -solution $solution -publishTarget $Manifest.builds.$buildType.publishTarget -buildConfiguration $Manifest.builds.$buildType.buildConfiguration
+CopyFiles -sourceFiles $environConfigs -publishTarget $Manifest.builds.$buildType.publishTarget
+CopyFiles -sourceFiles $Manifest.builds.$buildType.licenseFile -publishTarget $Manifest.builds.$buildType.licenseTarget
+AddSite -iisSiteName $Manifest.builds.$buildType.iisSiteName -siteRoot $Manifest.builds.$buildType.iisPath -hostnames $Manifest.builds.$buildType.hostNames
+CopyDatabaseFiles -cmsRepository $Manifest.builds.$buildType.cmsRepository -manifest $Manifest -dbDataLocation $Manifest.builds.$buildType.dbDataLocation -tempDir $Manifest.builds.$buildType.tempDir -dbNamePrefix $Manifest.builds.$buildType.dbNamePrefix
+CreateDbLogin -username $Manifest.builds.$buildType.dbUsername -password $Manifest.builds.$buildType.dbPassword -sqlServer $Manifest.builds.$buildType.sqlServer
+AttachAllDatabases -dbNamePrefix $Manifest.builds.$buildType.dbNamePrefix -dbDataLocation $Manifest.builds.$buildType.dbDataLocation -sqlServer $Manifest.builds.$buildType.sqlServer
+SetupDbPermissions -dbNamePrefix $Manifest.builds.$buildType.dbNamePrefix -username $Manifest.builds.$buildType.dbUsername -sqlServer $Manifest.builds.$buildType.sqlServer
+PerformUnicornSync -targetHostName $Manifest.builds.$buildType.targetHostName -unicornDeploymentToken $Manifest.builds.$buildType.unicornDeploymentToken
+RemoveDir -dir $Manifest.builds.$buildType.tempDir
 
 ############################################
 # UnLoad Modules

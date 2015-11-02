@@ -95,9 +95,9 @@ function CopyDatabaseFiles($cmsRepository, $manifest, $publishTarget, $tempDir)
 
 function PerformUnicornSync($targetHostName, $unicornDeploymentToken)
 {
+  Write-Host("Beginning Unicorn Item Sync.")
   $url = 'http://'+$targetHostName+'/unicorn.aspx?verb=Sync'
   $deploymentToolAuthToken = $unicornDeploymentToken
   $result = Invoke-WebRequest -Uri $url -Headers @{ "Authenticate" = $deploymentToolAuthToken } -TimeoutSec 10800 -UseBasicParsing
-
   Write-Host $result.Content
 }

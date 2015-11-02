@@ -1,5 +1,27 @@
 {
-  'name': 'Habitat',
-  'version': '0.1',
-  'cmsVersion': 'Sitecore 8.1 rev. 151003'
+  name: "Habitat",
+  version: "0.1",
+  cmsVersion: "Sitecore 8.1 rev. 151003",
+  cmsModules: { },
+  builds: {
+    local: {
+      cmsRepository: "d:\\Sitecore Repo\\CMS",
+      unzipTarget: "c:\\Websites\\habitat.local",
+      publishTarget: "c:\\Websites\\habitat.local\\Website",
+      licenseTarget: "c:\\Websites\\habitat.local\\Data",
+      iisPath: "c:\\Websites\\habitat.local\\Website",
+      licenseFile: "d:\\Sitecore Repo\\Licenses\\license.xml",
+      iisSiteName: "Habitat",
+      hostNames: ["habitat", "habitat.local"],
+      buildConfiguration: "debug",
+      dbDataLocation: "D:\\SQL\\MSSQL11.SQLSERVER\\MSSQL\\DATA",
+      tempDir: "c:\\temp\\HabitatInstall",
+      dbNamePrefix: "HabitatNew",
+      dbUsername: "habitat",
+      dbPassword: "habitat",
+      sqlServer: "localhost\\SQLSERVER",
+      targetHostName: "habitat.local",
+      unicornDeploymentToken: "68433ab4-a113-4f39-9b30-fb0e425c7a16"
+    }
+  }
 }
