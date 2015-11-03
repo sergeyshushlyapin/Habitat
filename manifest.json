@@ -6,10 +6,7 @@
   builds: {
     local: {
       cmsRepository: "d:\\Sitecore Repo\\CMS",
-      unzipTarget: "c:\\Websites\\habitat.local",
-      publishTarget: "c:\\Websites\\habitat.local\\Website",
-      licenseTarget: "c:\\Websites\\habitat.local\\Data",
-      iisPath: "c:\\Websites\\habitat.local\\Website",
+      websiteTarget: "c:\\Websites\\habitat.local",
       licenseFile: "d:\\Sitecore Repo\\Licenses\\license.xml",
       iisSiteName: "Habitat",
       hostNames: ["habitat", "habitat.local"],
