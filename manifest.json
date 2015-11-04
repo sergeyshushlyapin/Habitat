@@ -13,7 +13,7 @@
       buildConfiguration: "debug",
       dbDataLocation: "D:\\SQL\\MSSQL11.SQLSERVER\\MSSQL\\DATA",
       tempDir: "c:\\temp\\HabitatInstall",
-      dbNamePrefix: "HabitatNew",
+      dbNamePrefix: "Habitat",
       dbUsername: "habitat",
       dbPassword: "habitat",
       sqlServer: "localhost\\SQLSERVER",
