@@ -11,8 +11,6 @@ namespace Sitecore.Foundation.Testing.Builders
     protected override object Resolve(ISpecimenContext context, ResolvePipelineAttribute attribute, ParameterInfo parameterInfo)
     {
       var db = (Db)context.Resolve(typeof(Db));
-      db.PipelineWatcher.Dispose();
-      db.GetType().GetField("pipelineWatcher", BindingFlags.Instance | BindingFlags.NonPublic)?.SetValue(db, null);
       var pipeline = (IPipelineProcessor)base.Resolve(context, attribute, parameterInfo);
       db.PipelineWatcher.Register(attribute.PipelineName, pipeline);
       return pipeline;
